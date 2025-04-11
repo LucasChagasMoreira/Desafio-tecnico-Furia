@@ -1,0 +1,232 @@
+Épico 1: Coletar Dados Básicos do Usuário
+História 1.1: Cadastrar informações pessoais
+
+Como fã de e-sports, quero inserir meus dados básicos (nome, endereço, CPF), para que o sistema possa me identificar de forma única.
+
+Critérios de Aceitação:
+
+Campo para nome, endereço e CPF deve estar disponível.
+
+CPF deve ter formatação e validação básica.
+
+Após inserir dados, são salvos no sistema/banco de dados local.
+
+Tarefas:
+
+ Criar tela inicial de cadastro no app.
+
+ Implementar campos de texto (TextInput) e botões de submit.
+
+ Validar formatação do CPF (ex: regex).
+
+ Salvar dados no banco ou arquivo local.
+
+História 1.2: Coletar dados de interesses, atividades e eventos
+
+Como fã de e-sports, quero registrar meus interesses, eventos que participei e produtos que comprei no último ano, para personalizar minha experiência.
+
+Critérios de Aceitação:
+
+Possibilidade de selecionar checklists ou dropdown de times, jogos, eventos.
+
+Permitir entrada de texto para eventos/atividades não listados.
+
+Tarefas:
+
+ Criar layout de formulário específico para interesses.
+
+ Adicionar lógica para armazenar a lista de interesses e eventos.
+
+ Mapear e categorizar informações (ex: jogos preferidos, produtos comprados, etc.).
+
+Épico 2: Upload e Validação de Documentos (AI)
+História 2.1: Fazer upload de documentos de identificação
+
+Como fã, quero enviar uma foto do meu RG (ou CNH, passaporte etc.), para que o sistema confirme que sou eu de fato.
+
+Critérios de Aceitação:
+
+Possibilidade de selecionar arquivo ou tirar foto da câmera.
+
+Sistema aceita formatos comuns (.jpg, .png, .pdf).
+
+Tarefas:
+
+ Criar botão e fluxo de upload.
+
+ Integrar com biblioteca para conversão ou compressão de imagens.
+
+ Salvar arquivo localmente ou em backend (caso exista).
+
+História 2.2: Validar documento via IA
+
+Como sistema, quero utilizar AI para comparar as informações do documento com os dados fornecidos (nome, CPF), para garantir a autenticidade.
+
+Critérios de Aceitação:
+
+AI ou serviço de OCR extrai nome, data de nascimento, número do documento.
+
+Comparação automática indica “compatível” ou “incompatível”.
+
+Tarefas:
+
+ Pesquisar e integrar biblioteca de OCR (ex: Tesseract, ou API de terceiros).
+
+ Criar lógica de comparação dos campos lidos com o cadastro.
+
+ Exibir mensagem de validação ao usuário (aprovado/rejeitado).
+
+Épico 3: Integração com Redes Sociais
+História 3.1: Vincular redes sociais ao perfil
+
+Como fã, quero vincular minhas contas (Twitter, Instagram, etc.), para que o app possa ler minhas interações e páginas seguidas de e-sports.
+
+Critérios de Aceitação:
+
+Usuário pode inserir tokens/chaves ou logar via OAuth.
+
+Após vincular, o app consegue acessar parte do perfil público.
+
+Tarefas:
+
+ Criar botões de Login com X rede.
+
+ Implementar fluxo de OAuth (dependendo de cada rede social).
+
+ Armazenar tokens de acesso localmente (de forma segura).
+
+História 3.2: Ler e analisar interações relacionadas a e-sports
+
+Como clube/equipe de e-sports, quero identificar posts, menções e páginas que o usuário segue, para entender melhor seus interesses e engajamento.
+
+Critérios de Aceitação:
+
+Sistema consegue filtrar publicações e páginas de organizações de e-sports.
+
+Dados são apresentados de forma resumida (tipo de interação, data).
+
+Tarefas:
+
+ Chamar APIs das redes sociais e filtrar pelo conteúdo de e-sports (hashtags, menções).
+
+ Armazenar resultados num banco de dados.
+
+ Criar tela de visualização desses dados dentro do app (opcional).
+
+Épico 4: Compartilhar Perfis em Sites de e-Sports
+História 4.1: Adicionar links de perfis em sites de e-sports
+
+Como fã, quero informar links para meus perfis em plataformas e-sports (Twitch, Steam, Discord, HLTV, etc.), para o sistema reconhecer minha atividade.
+
+Critérios de Aceitação:
+
+Possibilidade de inserir uma lista de URLs.
+
+O app detecta automaticamente se o link é válido.
+
+Tarefas:
+
+ Criar campo de input para múltiplos links.
+
+ Validar se os links têm formato de URL.
+
+ Opcional: Usar requests para verificar se a URL está online.
+
+História 4.2: Validar se o conteúdo é relevante via IA
+
+Como sistema, quero analisar o perfil ou conteúdo dos links, para confirmar se realmente estão relacionados a e-sports.
+
+Critérios de Aceitação:
+
+Uso de algum modelo ou heurística para identificar temas de e-sports (ex: nome de jogos, equipes).
+
+Retorno automático se o link é “relevante” ou “não relevante”.
+
+Tarefas:
+
+ Integrar com alguma API ou biblioteca de NLP para análise textual.
+
+ Definir limiar de relevância (ex: >=80% dos termos relacionados a e-sports).
+
+ Exibir resultado ao usuário.
+
+Épico 5: Apresentar Solução e Documentar
+História 5.1: Criar protótipo navegável ou app funcional
+
+Como desenvolvedor, quero empacotar a aplicação em um app (ex: APK no Android) ou protótipo navegável, para demonstrar todas as funcionalidades mencionadas.
+
+Critérios de Aceitação:
+
+Todas as telas de cadastro, validação e análise estejam presentes.
+
+É possível navegar e utilizar as funções básicas sem erros.
+
+Tarefas:
+
+ Configurar ambiente e dependências no buildozer.spec (Kivy).
+
+ Gerar APK com buildozer android debug.
+
+ Testar em dispositivo físico ou emulador.
+
+História 5.2: Apresentar a solução em vídeo (3 minutos)
+
+Como participante do desafio, quero demonstrar o uso da aplicação com meus próprios dados, para comprovar a funcionalidade.
+
+Critérios de Aceitação:
+
+Vídeo prático mostrando a coleta de dados, upload de documento, vinculação de redes.
+
+Tempo limite de ~3 minutos.
+
+Tarefas:
+
+ Gravar tela do app em execução.
+
+ Narrar ou explicar rapidamente cada funcionalidade.
+
+ Publicar vídeo em plataforma (YouTube, etc.) ou enviar conforme instruções do desafio.
+
+História 5.3: Documentar no GitHub
+
+Como desenvolvedor, quero ter uma documentação clara e completa no repositório, para que qualquer pessoa possa instalar e executar o projeto.
+
+Critérios de Aceitação:
+
+README explicando requisitos, como rodar localmente e como empacotar para mobile.
+
+Instruções de uso das principais telas.
+
+Tarefas:
+
+ Criar um README detalhado.
+
+ Adicionar guias ou Wiki, se necessário.
+
+ Incluir issues e project board para acompanhamento do desenvolvimento.
+
+Exemplo de Prioridades (MoSCoW)
+Must Have (M):
+
+Cadastro de dados básicos (História 1.1)
+
+Upload de documento e validação AI (2.1 e 2.2)
+
+Tela de formulário de interesses (1.2)
+
+Should Have (S):
+
+Vincular redes sociais (3.1) e ler interações (3.2)
+
+Compartilhar links de perfis e validá-los (4.1 e 4.2)
+
+Could Have (C):
+
+Recursos extras de UX, como animações ou chatbots.
+
+Integrações adicionais com plataformas específicas além das principais redes.
+
+Won’t Have (W):
+
+Itens não mencionados no escopo do desafio ou considerados fora de prioridade atual.
+
