@@ -1,0 +1,4 @@
+Email = ""
+cpf = ""
+endereco = ""
+atividades = ""
