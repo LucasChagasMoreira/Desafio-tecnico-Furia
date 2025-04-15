@@ -67,7 +67,7 @@ class TelaInicial(Screen):
         
         # Botão ou link de "Esqueci minha senha"
         create_layout = BoxLayout(orientation='horizontal', size_hint=(1, 0.1))
-        create_button = Button(text="Esqueci minha senha", size_hint=(1, 1))
+        create_button = Button(text="Criar Conta", size_hint=(1, 1))
         create_button.bind(on_press=self.ir_para_cadastro)
         create_layout.add_widget(create_button)
         main_layout.add_widget(create_layout)

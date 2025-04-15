@@ -1,4 +1,0 @@
-Email = ""
-cpf = ""
-endereco = ""
-atividades = ""

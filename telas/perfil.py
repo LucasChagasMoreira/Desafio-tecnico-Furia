@@ -22,7 +22,7 @@ class TelaPerfil(Screen):
         # Layout principal vertical para distribuir:
         # 1) Cabeçalho (foto + nome) - FloatLayout
         # 2) BoxLayout para info do meio
-        # 3) BoxLayout para o Logout
+        # 3) BoxLayout para os botões "Verificar Perfil" e "Logout"
         main_layout = BoxLayout(orientation='vertical', spacing=dp(10), padding=dp(10))
 
         # === TOPO: FloatLayout para posicionar foto e nome ===
@@ -47,7 +47,6 @@ class TelaPerfil(Screen):
             size_hint=(None, None),
             pos_hint={'center_x': 0.5, 'center_y': 0.5}  # centro do FloatLayout
         )
-        # Ajustar text_size para centralizar internamente
         nome_label.bind(
             size=lambda instance, value: setattr(instance, 'text_size', instance.size)
         )
@@ -65,18 +64,33 @@ class TelaPerfil(Screen):
 
         for lbl in [info_link, info_email, info_cpf, info_endereco]:
             lbl.bind(size=lambda instance, value: setattr(instance, 'text_size', instance.size))
-
+        
         middle_section.add_widget(info_link)
         middle_section.add_widget(info_email)
         middle_section.add_widget(info_cpf)
         middle_section.add_widget(info_endereco)
 
-        # === BASE: botão Logout ===
-        bottom_section = BoxLayout(orientation='horizontal', size_hint=(1, 0.2), padding=dp(10))
-        btn_logout = Button(text="Logout", size_hint=(1, None), height=dp(45))
+        # === BASE: Botões "Verificar Perfil" e "Logout" ===
+        bottom_section = BoxLayout(orientation='horizontal', size_hint=(1, 0.2), padding=dp(10), spacing=dp(10))
+        
+        btn_verificar = Button(
+            text="Verificar Perfil",
+            size_hint=(0.5, None),
+            height=dp(45)
+        )
+        btn_verificar.bind(on_release=self.verificar_perfil)
+        
+        btn_logout = Button(
+            text="Logout",
+            size_hint=(0.5, None),
+            height=dp(45)
+        )
+        btn_logout.bind(on_release=self.logout)
+        
+        bottom_section.add_widget(btn_verificar)
         bottom_section.add_widget(btn_logout)
 
-        # Adiciona tudo ao layout principal
+        # Adiciona as seções ao layout principal
         main_layout.add_widget(top_section)
         main_layout.add_widget(middle_section)
         main_layout.add_widget(bottom_section)
@@ -89,5 +103,18 @@ class TelaPerfil(Screen):
         self.bg_rect.pos = self.pos
         self.bg_rect.size = self.size
 
+    def verificar_perfil(self, instance):
+        # Implemente aqui a lógica para verificar o perfil
+        self.manager.current = "documento"
 
+    def logout(self, instance):
+        # Implemente aqui a lógica para logout
+        self.manager.current = "login"
 
+# Exemplo de teste independente
+if __name__ == "__main__":
+    from kivy.app import App
+    class TestApp(App):
+        def build(self):
+            return TelaPerfil()
+    TestApp().run()

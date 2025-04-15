@@ -5,6 +5,7 @@ from cadastro import TelaCadastro
 from inicial import TelaInicial
 from principal import TelaPrincipal
 from perfil import TelaPerfil
+from documentos import TelaDocumento
 
 class Appli(App):
     def build(self):
@@ -14,12 +15,11 @@ class Appli(App):
 
         #Adicionando todas as telas ao ScreenManager
         geren.add_widget(TelaInicial())
-        geren.add_widget(TelaCadastro())
-        
+        geren.add_widget(TelaDocumento())
         geren.add_widget(TelaPerfil())
         geren.add_widget(TelaPrincipal())
         
-        
+        geren.add_widget(TelaCadastro())
         
         return geren
 

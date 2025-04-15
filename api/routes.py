@@ -12,7 +12,7 @@ def get_usuario(usuario_email):
 
 def criar_usuario():
     data = request.get_json()
-    # Verifica se os campos necessários estão presentes
+    # Verifica se os campos necessários estão presentes (nome e email)
     if not data or not all(key in data for key in ("nome", "email")):
         return jsonify({"error": "Dados incompletos"}), 400
 
@@ -24,16 +24,18 @@ def criar_usuario():
         with open(csv_filename, "a", encoding="utf-8", newline="") as arquivo:
             writer = csv.writer(arquivo)
             if not file_exists or os.stat(csv_filename).st_size == 0:
-                # Escreve o cabeçalho se o arquivo estiver vazio
-                writer.writerow(["Nome", "Email"])
-            writer.writerow([data["nome"], data["email"]])
+                # Escreve o cabeçalho, agora com 4 colunas
+                writer.writerow(["Nome", "Email", "CPF", "Endereço"])
+            # Escreve os dados recebidos e insere dois campos vazios para CPF e Endereço
+            writer.writerow([data["nome"], data["email"], "", ""])
         print("Dados recebidos:", data)
         return jsonify(data), 201
     except Exception as e:
         print("Erro ao salvar os dados:", e)
         return jsonify({"error": "Erro no servidor"}), 500
     
-def buscar_usuario_por_email(email_target, arquivo_csv="../dados/dados.csv"):
+
+def buscar_usuario_por_email(email_target, arquivo_csv="dados/dados.csv"):
     try:
         with open(arquivo_csv, "r", encoding="utf-8", newline="") as csvfile:
             reader = csv.DictReader(csvfile)
@@ -45,3 +47,4 @@ def buscar_usuario_por_email(email_target, arquivo_csv="../dados/dados.csv"):
     except Exception as e:
         print("Erro ao abrir o arquivo:", e)
         return None
+    

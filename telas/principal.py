@@ -35,6 +35,8 @@ class TelaPrincipal(Screen):
                            size_hint=(1, 0.6))
 
         boperfil = Button(text = "Perfil")
+        boperfil.bind(on_press=self.ir_para_perfil)
+
         loja = Button(text = "loja")
         atividades = Button(text = "atividades")
 
@@ -61,3 +63,6 @@ class TelaPrincipal(Screen):
         tela1.add_widget(right)
 
         self.add_widget(tela1)
+        
+    def ir_para_perfil(self,instance):
+        self.manager.current = "perfil"
