@@ -2,15 +2,29 @@ import pytesseract
 from PIL import Image
 from flask import jsonify, request
 
-def validar_documento(documento):
+def validar_documento(documento, cpf):
     try:
-        
+        # Abre a imagem do arquivo enviado
         image = Image.open(documento.stream)
-        # Extrai o texto da imagem com pytesseract
+        
+        # Extrai o texto da imagem (ajuste o idioma conforme necessário)
         texto_extraido = pytesseract.image_to_string(image, lang='por')
-    
-        # Retorna o texto extraído no formato JSON
-        return jsonify({"texto": texto_extraido}), 200
+        
+        if cpf in texto_extraido:
+            return jsonify({
+                "valid": True,
+                "message": "CPF encontrado no documento.",
+                "texto": texto_extraido
+            }), 200
+        else:
+            print("cpf não contido")
+            return jsonify({
+                "valid": False,
+                "message": "CPF não encontrado no documento.",
+                "texto": texto_extraido
+            }), 400
     except Exception as e:
-        # Em caso de erro, retorna uma mensagem de erro com detalhes
-        return jsonify({"error": "Erro ao processar o documento.", "detalhes": str(e)}), 500
+        return jsonify({
+            "error": "Erro ao processar o documento.",
+            "detalhes": str(e)
+        }), 500

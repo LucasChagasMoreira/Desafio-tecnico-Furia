@@ -3,81 +3,99 @@ from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import Screen
 from kivy.uix.textinput import TextInput
-from validate_docbr import CPF
 from utils import show_popup
+from kivy.metrics import dp
+import json
 import requests
 
 class TelaCadastro(Screen):
-    def __init__(self,**kwargs):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        # atributo usado para a troca de telas
         self.name = "cadastro"
 
-        #layout do cadastro
+        # Layout principal
         layout = BoxLayout(
-            orientation = "vertical",
-            height=60,
-            
+            orientation="vertical",
+            padding=[dp(20), dp(20), dp(20), dp(20)],
+            spacing=dp(20)
         )
 
-        #caixa de texto do nome
+        # Título da tela
+        titulo = Label(
+            text="Cadastro",
+            font_size="32sp",
+            size_hint=(1, 0.2),
+            halign="center",
+            valign="middle"
+        )
+        # Atualiza o text_size do título
+        titulo.bind(size=lambda instance, value: setattr(instance, 'text_size', instance.size))
+        
+        # nome do usuário
         self.nome = TextInput(
             hint_text="Digite seu nome aqui",
             size_hint=(1, None),
-            height=60,
-            font_size = "20dp",
-            multiline=False  
+            height=dp(50),
+            font_size="20sp",
+            multiline=False
         )
-
-        #caixa de texto do cpf
+        
+        # Texto para o e-mail
         self.email = TextInput(
             hint_text="Digite seu email aqui",
             size_hint=(1, None),
-            height=60,
-            font_size = "20dp",
-            multiline=False 
-        )
-        '''
-        # caixa de texto do endereço
-        self.endereco = TextInput(
-            hint_text="Digite seu endereço aqui",
-            size_hint=(1, None),
-            height=60,
-            font_size = "20dp",
+            height=dp(50),
+            font_size="20sp",
             multiline=False
         )
-'''
-        #adiciona os blocos de texto ao layout
+        
+        # Botão para confirmar o cadastro
+        confirmar = Button(
+            text="Cadastrar",
+            size_hint=(1, None),
+            height=dp(50),
+            font_size="20sp",
+            background_color=(0.2, 0.6, 0.8, 1)
+        )
+        confirmar.bind(on_press=self.cadastrar)
+        
+        # Adicionando os widgets
+        layout.add_widget(titulo)
         layout.add_widget(self.nome)
         layout.add_widget(self.email)
-        confirmar = Button(text = "Cadastrar")
-
         layout.add_widget(confirmar)
-        confirmar.bind(on_press=self.cadastrar)
+        
+        # Adiciona o layout principal a tela
         self.add_widget(layout)
 
     def cadastrar(self, instance):
         # Verifica se todos os campos foram preenchidos
         if self.nome.text and self.email.text:
 
-            # Preparar os dados para envio em formato JSON
             data = {
-                "nome": self.nome.text,
-                "email": self.email.text
+                "Nome": self.nome.text,
+                "Email": self.email.text                
             }
 
-            # Define a URL da API; ajuste conforme a sua configuração
             url = "http://localhost:5000/api/usuario"
 
             try:
-                # Envia a requisição POST com os dados
+                # requisição POST com os dados
                 response = requests.post(url, json=data)
                 if response.status_code == 201:
                     show_popup("Dados salvos com sucesso!")
                     print("Dados salvos com sucesso!")
-                    # Limpa os campos após o sucesso
+                    
+                    try:
+                        with open("../cache/cache.json", "w", encoding="utf-8") as cache_file:
+                            json.dump(data, cache_file)
+                        print("Cache salvo com sucesso!")
+                    except Exception as cache_error:
+                        print("Erro ao salvar o cache:", cache_error)
+                        
                     self.nome.text = ""
                     self.email.text = ""
+                    
                     #retorna a aba de login
                     self.manager.current = "login"
                     return 0
