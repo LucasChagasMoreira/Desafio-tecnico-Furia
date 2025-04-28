@@ -3,7 +3,6 @@ from kivy.uix.label import Label
 from kivy.uix.widget import Widget
 import platform, subprocess, webbrowser, os
 import json
-from urllib.parse import urlparse, parse_qs
 
 
 def show_popup(message):

@@ -1,0 +1,49 @@
+{
+    "Nome": "jkjlj",
+    "Link do Perfil": "Campo Link do Perfil não encontrado.",
+    "Email": "a@",
+    "CPF": "143",
+    "Endereço": "minha casa",
+    "follow_facebook": [
+      {
+        "nome": "FURIA Esports",
+        "tipo": "Página",
+        "categoria": "Organização de e-sports",
+        "link": "https://www.facebook.com/furiaesports"
+      },
+      {
+        "nome": "Gabriel \"FalleN\" Toledo",
+        "tipo": "Pessoa",
+        "categoria": "Jogador Profissional de CS:GO",
+        "link": "https://www.facebook.com/GabrielFalleNToledo"
+      },
+      {
+        "nome": "Team Liquid",
+        "tipo": "Página",
+        "categoria": "Organização de e-sports",
+        "link": "https://www.facebook.com/TeamLiquid"
+      },
+      {
+        "nome": "League of Legends Brasil",
+        "tipo": "Página",
+        "categoria": "Comunidade de e-sports",
+        "link": "https://www.facebook.com/leagueoflegendsBR"
+      }
+    ],
+    "compras": [
+      {
+        "item": "Mouse Gamer Logitech G502",
+        "categoria": "Hardware",
+        "preço": 349.90,
+        "data_compra": "2025-02-10",
+        "loja": "Kabum"
+      },
+      {
+        "item": "Camisa Oficial FURIA Esports",
+        "categoria": "Merchandising",
+        "preço": 129.90,
+        "data_compra": "2025-03-30",
+        "loja": "Official Store"
+      }
+    ]
+  }

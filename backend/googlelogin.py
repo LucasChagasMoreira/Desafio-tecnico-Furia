@@ -32,46 +32,65 @@ def auth_callback():
     session['oauth_token'] = token
 
     # decodifica o ID Token (com nonce salvo)
-    nonce     = session.get(f'oauth_{client.name}_nonce')
+    nonce = session.get(f'oauth_{client.name}_nonce')
     user_info = client.parse_id_token(token, nonce)
 
     # armazena o perfil do usuário na sessão
     session['user'] = {
-        'id':      user_info['sub'],
-        'name':    user_info['name'],
-        'email':   user_info['email'],
-        'picture': user_info['picture']
+        'id': user_info['sub'],
+        'name': user_info['name'],
+        'email': user_info['email'],
+        'picture': user_info.get('picture', '')
     }
 
-    # grava no CSV
+    # grava no CSV apenas se email não existe
     csv_file = 'dados/dados.csv'
-    fieldnames = ['Nome', 'Email', 'CPF', 'Endereço']
-    row = {
-        'Nome':     user_info.get('name', ''),
-        'Email':    user_info.get('email', ''),
-        'CPF':      '',
-        'Endereço': ''
-    }
     os.makedirs(os.path.dirname(csv_file), exist_ok=True)
-    file_exists = os.path.isfile(csv_file)
-    with open(csv_file, mode='a', newline='', encoding='utf-8') as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction='ignore')
-        if not file_exists:
-            writer.writeheader()
-        writer.writerow(row)
+    fieldnames = ['Nome', 'Email', 'CPF', 'Endereço']
+    user_email = user_info.get('email', '')
+    user_name = user_info.get('name', '')
+
+    # Verifica existência
+    exists = False
+    if os.path.isfile(csv_file):
+        try:
+            with open(csv_file, mode='r', newline='', encoding='utf-8') as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    if row.get('Email') == user_email:
+                        exists = True
+                        break
+        except Exception as e:
+            print(f'Erro ao ler CSV: {e}')
+
+    # Se não existe, adiciona nova linha
+    if not exists:
+        try:
+            with open(csv_file, mode='a', newline='', encoding='utf-8') as f:
+                writer = csv.DictWriter(f, fieldnames=fieldnames)
+                if os.stat(csv_file).st_size == 0:
+                    writer.writeheader()
+                writer.writerow({
+                    'Nome': user_name,
+                    'Email': user_email,
+                    'CPF': '',
+                    'Endereço': ''
+                })
+        except Exception as e:
+            print(f'Erro ao escrever CSV: {e}')
 
     # grava um JSON cache para o front
     json_cache = 'backend/auth.json'
-    cache_entry = {
-        'Nome':  row['Nome'],
-        'Email': row['Email']
-    }
     os.makedirs(os.path.dirname(json_cache), exist_ok=True)
+    cache_entry = {
+        'Nome': user_name,
+        'Email': user_email
+    }
     try:
         with open(json_cache, 'w', encoding='utf-8') as jf:
             json.dump(cache_entry, jf, ensure_ascii=False, indent=2)
     except Exception as e:
-        print("Erro ao salvar JSON cache:", e)
+        print(f'Erro ao salvar JSON cache: {e}')
 
     return redirect(url_for('index'))
 

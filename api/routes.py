@@ -1,7 +1,8 @@
 import os
 import csv
-from flask import jsonify, request, session
-from backend.googlelogin import oauth
+from flask import jsonify, request
+import threading
+
 def get_usuario(usuario_email):
     # Busca no CSV o usuário com o email informado
     usuario = buscar_usuario_por_email(usuario_email)
@@ -63,5 +64,105 @@ def buscar_usuario_por_email(email_target, arquivo_csv="dados/dados.csv"):
     except Exception as e:
         print("Erro ao abrir o arquivo:", e)
         return None
-    
 
+def salvar_atividade():
+    data = request.get_json(force=True)
+    email = data.get('Email')
+    link = data.get('link')
+    CSV_LOCK = threading.Lock()
+    USERS_CSV = 'dados/dados.csv'
+    ACTIVITIES_CSV = 'dados/atividades.csv'
+
+    if not email or not link:
+        return jsonify({'error': 'Dados incompletos'}), 400
+
+    with CSV_LOCK:
+        # Verifica existência do email no CSV de usuários
+        try:
+            with open(USERS_CSV, newline='', encoding='utf-8') as f_users:
+                reader = csv.DictReader(f_users)
+                if 'Email' not in reader.fieldnames:
+                    return jsonify({'error': 'Coluna Email não encontrada no CSV de usuários'}), 500
+
+                exists = any(row['Email'] == email for row in reader)
+        except FileNotFoundError:
+            return jsonify({'error': 'CSV de usuários não encontrado'}), 500
+        except Exception as e:
+            return jsonify({'error': f'Erro ao ler CSV de usuários: {e}'}), 500
+
+        if not exists:
+            return jsonify({'error': 'Email não cadastrado'}), 404
+
+        # Prepara atividade
+        activity = {
+            'Email': email,
+            'tipo': 'acesso',
+            'link': link
+        }
+
+        # Escreve no CSV de atividades
+        file_exists = os.path.isfile(ACTIVITIES_CSV)
+        try:
+            with open(ACTIVITIES_CSV, 'a', newline='', encoding='utf-8') as f_act:
+                fieldnames = ['Email','tipo', 'link']
+                writer = csv.DictWriter(f_act, fieldnames=fieldnames)
+                if not file_exists:
+                    writer.writeheader()
+                writer.writerow(activity)
+        except Exception as e:
+            return jsonify({'error': f'Falha ao gravar atividades: {e}'}), 500
+
+    return jsonify({'status': 'Atividade registrada'}), 200
+  
+def att_usuario():
+    # Extrai dados do corpo da requisição
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'Corpo JSON inválido'}), 400
+
+    email = data.get('Email')
+    if not email:
+        return jsonify({'error': 'Campo "email" é obrigatório'}), 400
+
+    filepath = 'dados/dados.csv'
+
+    # 2) Lê todas as linhas do CSV
+    try:
+        with open(filepath, newline='', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            fieldnames = reader.fieldnames
+            rows = list(reader)
+    except FileNotFoundError:
+        return jsonify({'error': 'Arquivo CSV não encontrado'}), 500
+
+    # 3) Procura e atualiza a linha do usuário
+    updated = False
+    for row in rows:
+        if row.get('Email') == email:
+            # atualiza só os campos que existem no CSV
+            for key, value in data.items():
+                if key in fieldnames:
+                    row[key] = value
+            updated = True
+            break
+
+    if not updated:
+        return jsonify({'error': 'Usuário não encontrado'}), 404
+
+    # 4) Escreve de volta todas as linhas, com header
+    try:
+        with open(filepath, 'w', newline='', encoding='utf-8') as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(rows)
+    except Exception as e:
+        return jsonify({'error': f'Falha ao gravar CSV: {e}'}), 500
+
+    # 5) Retorna sucesso
+    return jsonify({
+        'status': 'sucesso',
+        'updated': {
+            'email': email,
+            **{k: v for k, v in data.items() if k in fieldnames}
+        }
+    }), 200

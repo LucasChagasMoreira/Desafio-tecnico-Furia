@@ -1,38 +1,55 @@
-import requests
+import json
+import csv
+import os
 
-BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAL3p0gEAAAAA7eGe1aTSxd1LEG6uSm6yNO6NiXM%3DseH7AlCGtb6vZr9I20GdLTHxZOqoBeHR6bsBVSITJHWK7dS173"
-HEADERS = {
-    "Authorization": f"Bearer {requests.utils.unquote(BEARER_TOKEN)}",
-    "User-Agent": "MyApp/1.0"
-}
+def process_json_to_csv(json_path: str, info_csv: str, activities_csv: str):
+    """
+    Lê um arquivo JSON em `json_path` e grava dois CSVs:
+      - `info_csv`: colunas Nome, Email, CPF, Endereço.
+      - `activities_csv`: colunas Email, Tipo, Link (somente follow_facebook).
+    """
+    # Carrega JSON
+    with open(json_path, 'r', encoding='utf-8') as jf:
+        data = json.load(jf)
 
-def get_user_id(username: str):
-    url = f"https://api.twitter.com/2/users/by/username/{username}"
-    r = requests.get(url, headers=HEADERS)
-    print("STATUS:", r.status_code)
-    print("JSON  :", r.json())
-    r.raise_for_status()
-    body = r.json()
-    if "errors" in body:
-        raise RuntimeError("Twitter error: " + str(body["errors"]))
-    return body["data"]["id"]
+    # Garante diretórios
+    os.makedirs(os.path.dirname(info_csv), exist_ok=True)
+    os.makedirs(os.path.dirname(activities_csv), exist_ok=True)
 
-def get_following(user_id: str):
-    url = f"https://api.twitter.com/2/users/{user_id}/following"
-    r = requests.get(url, headers=HEADERS)
-    print("STATUS:", r.status_code)
-    print("JSON  :", r.json())
-    r.raise_for_status()
-    body = r.json()
-    if "errors" in body:
-        raise RuntimeError("Twitter error: " + str(body["errors"]))
-    return body.get("data", [])
+    # 1) CSV de info do usuário (sem Link do Perfil)
+    info_fields = ['Nome', 'Email', 'CPF', 'Endereço']
+    info_exists = os.path.isfile(info_csv)
+    with open(info_csv, 'a', newline='', encoding='utf-8') as f_info:
+        writer = csv.DictWriter(f_info, fieldnames=info_fields)
+        if not info_exists:
+            writer.writeheader()
+        row_info = {
+            'Nome': data.get('Nome', ''),
+            'Email': data.get('Email', ''),
+            'CPF': data.get('CPF', ''),
+            'Endereço': data.get('Endereço', '')
+        }
+        writer.writerow(row_info)
 
-if __name__ == "__main__":
-    try:
-        uid = get_user_id("TwitterDev")
-        follows = get_following(uid)
-        print(f"Found {len(follows)} follows.")
-    except Exception as e:
-        print("ERROR:", e)
+    # 2) CSV de atividades: apenas follow_facebook
+    activities_fields = ['Email', 'Tipo', 'Link']
+    act_exists = os.path.isfile(activities_csv)
+    with open(activities_csv, 'a', newline='', encoding='utf-8') as f_act:
+        writer = csv.DictWriter(f_act, fieldnames=activities_fields)
+        if not act_exists:
+            writer.writeheader()
+        email = data.get('Email', '')
+        for entry in data.get('follow_facebook', []):
+            writer.writerow({
+                'Email': email,
+                'Tipo': 'follow',
+                'Link': entry.get('link', '')
+            })
 
+if __name__ == '__main__':
+    # Exemplo de uso
+    process_json_to_csv(
+        json_path='dados/dadosexemplo.json',
+        info_csv='dados/dados.csv',
+        activities_csv='dados/atividades.csv'
+    )

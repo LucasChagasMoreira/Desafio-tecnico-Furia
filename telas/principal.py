@@ -1,69 +1,14 @@
 from kivy.app import App
-from kivy.uix.screenmanager import Screen, ScreenManager
+from kivy.uix.screenmanager import Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.scrollview import ScrollView
-from kivy.uix.image import AsyncImage, Image
+from kivy.uix.image import Image
 from kivy.uix.label import Label
 from kivy.uix.button import Button
-from kivy.uix.textinput import TextInput
 from kivy.graphics import Color, RoundedRectangle
 from kivy.metrics import dp
-from kivy.clock import Clock
-import webbrowser
-
-
-class FeedItem(BoxLayout):
-    def __init__(self, title, description, link, media_src='', **kwargs):
-        super().__init__(**kwargs)
-        self.orientation = 'vertical'
-        self.padding = dp(10)
-        self.spacing = dp(5)
-        self.size_hint_y = None
-        self.height = dp(280)
-
-        # Thumbnail
-        thumbnail = AsyncImage(
-            source=media_src,
-            size_hint=(1, None),
-            height=dp(150),
-            allow_stretch=True,
-            keep_ratio=False
-        )
-        self.add_widget(thumbnail)
-
-        # Título
-        title_lbl = Label(
-            text=title,
-            size_hint_y=None,
-            height=dp(30),
-            bold=True,
-            color=(1, 1, 1, 1),
-            halign='left',
-            valign='middle'
-        )
-        title_lbl.bind(size=lambda inst, val: setattr(inst, 'text_size', inst.size))
-        self.add_widget(title_lbl)
-
-        # Descrição
-        desc_lbl = Label(
-            text=description,
-            size_hint_y=None,
-            height=dp(40),
-            color=(0.7, 0.7, 0.7, 1),
-            halign='left',
-            valign='top'
-        )
-        desc_lbl.bind(size=lambda inst, val: setattr(inst, 'text_size', inst.size))
-        self.add_widget(desc_lbl)
-
-        # Botão de ação
-        action_btn = Button(
-            text='Abrir',
-            size_hint=(None, None),
-            size=(dp(100), dp(40))
-        )
-        action_btn.bind(on_release=lambda *_: webbrowser.open(link))
-        self.add_widget(action_btn)
+from utils import cache_search
+from feeditem import FeedItem
 
 
 class TelaPrincipal(Screen):
@@ -95,7 +40,7 @@ class TelaPrincipal(Screen):
 
         # Foto e nome
         foto_e_nome = BoxLayout(orientation='vertical', size_hint_y=0.3)
-        foto = Image(
+        self.foto = Image(
             source='profile.png',
             size_hint=(None, None),
             size=(dp(80), dp(80)),
@@ -103,26 +48,17 @@ class TelaPrincipal(Screen):
             keep_ratio=True,
             pos_hint={'center_x': 0.5, 'top': 1}
         )
-        nome = Label(
+        self.nome = Label(
             text='Nome do Usuário',
             font_size='18sp',
             color=(1, 1, 1, 1),
             halign='center',
             valign='middle'
         )
-        nome.bind(size=lambda inst, val: setattr(inst, 'text_size', inst.size))
-        foto_e_nome.add_widget(foto)
-        foto_e_nome.add_widget(nome)
+        self.nome.bind(size=lambda inst, val: setattr(inst, 'text_size', inst.size))
+        foto_e_nome.add_widget(self.foto)
+        foto_e_nome.add_widget(self.nome)
 
-        # Campo de texto
-        self.campo_extra = TextInput(
-            hint_text='Digite aqui...',
-            size_hint_y=None,
-            height=dp(40),
-            multiline=False,
-            background_color=(1, 1, 1, 1),
-            foreground_color=(0, 0, 0, 1)
-        )
 
         # Botões
         boperfil = Button(text='Perfil', size_hint_y=None, height=dp(40), background_normal='', background_color=(1, 1, 1, 1), color=(0, 0, 0, 1))
@@ -132,7 +68,6 @@ class TelaPrincipal(Screen):
         loja.bind(on_release=self.ir_para_loja)
 
         left.add_widget(foto_e_nome)
-        left.add_widget(self.campo_extra)
         left.add_widget(boperfil)
         left.add_widget(loja)
         left.add_widget(atividades)
@@ -148,35 +83,37 @@ class TelaPrincipal(Screen):
         self.add_widget(outer)
 
     def on_pre_enter(self):
+        self.nome.text = cache_search("Nome") or ' '
         self.feed_box.clear_widgets()
         exemplos = [
             {
-                'title': 'Notícia: Lançamento de Produto',
-                'description': 'Conheça o novo produto que vai revolucionar o mercado.',
-                'link': 'https://exemplo.com/noticia1',
-                'media_src': 'https://picsum.photos/400/150?random=1'
+                'title': 'LTA Sul: “Eles precisam de mais experiência no palco”, comenta Thinkcard, técnico da FURIA',
+                'description': 'Confira como foi a coletiva de imprensa com a comissão técnica dos panteras',
+                'link': 'https://www.pichauarena.com.br/lol/thinkcard-tecnico-da-furia/',
+                'image_path': 'imagens/imagem1.webp'
             },
             {
-                'title': 'Vídeo: Tutorial Kivy',
-                'description': 'Aprenda como criar interfaces incríveis com Kivy.',
-                'link': 'https://youtube.com/watch?v=dQw4w9WgXcQ',
-                'media_src': 'https://picsum.photos/400/150?random=2'
+                'title': 'FalleN analisa nova FURIA e fala sobre troca de função: "Ainda posso atuar em alto nível',
+                'description': 'Brasileiro comenta sobre chegada de novos jogadores, mudança da equipe e mais; confira',
+                'link': 'https://draft5.gg/noticia/fallen-analisa-nova-furia-e-fala-sobre-troca-de-funcao-ainda-posso-atuar-em-alto-nivel',
+                'image_path': 'imagens/fallen.jpg'
             },
             {
-                'title': 'Artigo: Novas Tecnologias',
-                'description': 'As tendências de tecnologia para os próximos anos.',
-                'link': 'https://exemplo.com/artigo',
-                'media_src': 'https://picsum.photos/400/150?random=3'
+                'title': 'Team Liquid se classifica com folga para os playoffs da CFBL 2025',
+                'description': 'Cavalaria lidera a fase de grupos com 10 vitórias e 18 de saldo',
+                'link': 'https://www.gamersegames.com.br/2025/04/10/team-liquid-se-classifica-com-folga-para-os-playoffs-da-cfbl-2025/',
+                'image_path': 'imagens/liquid.webp'
             },
             {
-                'title': 'Blog: Dicas de Programação',
-                'description': 'Melhore seu código com estas dicas práticas.',
-                'link': 'https://blog.exemplo.com/dicas',
-                'media_src': 'https://picsum.photos/400/150?random=4'
+                'title': 'AO VIVO: RED x FXW7 & FUR x LOUD | LTA SUL FASE DE GRUPOS DIA 2 | ILHA DAS LENDAS',
+                'description': '🏆 Dia 2 da fase de grupos da Lta sul, confrontos parelhos, Loud embalada 🏆',
+                'link': 'https://youtu.be/ZAXN5x8t21U',
+                'image_path': 'imagens/lol.png'
             }
+
         ]
         for e in exemplos:
-            item = FeedItem(e['title'], e['description'], e['link'], e['media_src'])
+            item = FeedItem(e['title'], e['description'], e['link'], e['image_path'])
             self.feed_box.add_widget(item)
 
     def ir_para_perfil(self, instance):

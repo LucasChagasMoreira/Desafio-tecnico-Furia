@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, session
-from api.routes import criar_usuario, get_usuario
+from api.routes import criar_usuario, get_usuario, att_usuario, salvar_atividade
 from backend.validar_documentos import validar_documento
 from backend.googlelogin import login_google, auth_callback, init_google_oauth, oauth, login_data
 import os
@@ -22,6 +22,9 @@ def api_criar_usuario():
     # Chama a função que cria (ou atualiza) o usuário
     return criar_usuario()
 
+@app.route('/api/atualizar_usuario', methods=['POST'])
+def api_attusuario():
+    return att_usuario()
 
 @app.route('/api/validar_documento', methods=['POST'])
 def validar_identidade():
@@ -54,6 +57,10 @@ def auth_callback_route():
 @app.route('/auth/credentials', methods=['GET'])
 def get_credentials():
     return login_data()
+
+@app.route('/api/activities', methods=['POST'])
+def att_activities():
+    return salvar_atividade()
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

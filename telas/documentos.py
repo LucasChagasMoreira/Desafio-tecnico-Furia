@@ -16,10 +16,10 @@ class TelaDocumento(Screen):
         # Layout principal 
         layout = BoxLayout(orientation='vertical', spacing=dp(10), padding=dp(10))
         
-        #selecionar o documento
+        # Selecionar o documento
         self.filechooser = FileChooserListView(
             filters=['*.pdf', '*.jpg', '*.png'],
-            path="." 
+            path="."
         )
         layout.add_widget(self.filechooser)
         
@@ -30,20 +30,42 @@ class TelaDocumento(Screen):
         )
         layout.add_widget(self.status_label)
         
-        # Botão para submeter o documento
+        # Container para botões
+        button_layout = BoxLayout(
+            orientation='horizontal',
+            size_hint=(1, None),
+            height=dp(50),
+            spacing=dp(10)
+        )
+        
+        # Botão Voltar
+        self.back_button = Button(
+            text="Voltar",
+            size_hint=(None, 1),
+            width=dp(100)
+        )
+        self.back_button.bind(on_press=self.voltar)
+        button_layout.add_widget(self.back_button)
+        
+        # Botão Submeter Documento
         self.submit_button = Button(
             text="Submeter Documento",
-            size_hint=(1, None),
-            height=dp(50)
+            size_hint=(1, 1)
         )
         self.submit_button.bind(on_press=self.submeter_documento)
-        layout.add_widget(self.submit_button)
+        button_layout.add_widget(self.submit_button)
+        
+        layout.add_widget(button_layout)
         
         # Adiciona o layout à Screen
         self.add_widget(layout)
 
+    def voltar(self, instance):
+        # Retorna para a tela anterior ou nome especificado
+        # Substitua 'tela_inicial' pelo nome correto da sua tela de origem
+        self.manager.current = 'principal'
+
     def submeter_documento(self, instance):
-        # Verifica se algum arquivo foi selecionado no FileChooser
         selection = self.filechooser.selection
         if not selection:
             self.status_label.text = "Nenhum documento selecionado!"
@@ -57,19 +79,20 @@ class TelaDocumento(Screen):
         cpf = cache_search("CPF")
         
         if cpf == " ":
-            show_popup("Voce ainda não cadastrou seu cpf.")
+            show_popup("Você ainda não cadastrou seu CPF.")
             return
 
         try:
             with open(filepath, "rb") as file_obj:
-                # Envia o arquivo para a API.
-                response = requests.post(url, files={"documento": file_obj},
-                                            data={"cpf": cache_search("CPF")} )
+                response = requests.post(
+                    url,
+                    files={"documento": file_obj},
+                    data={"cpf": cpf}
+                )
                 
                 if response.status_code == 200:
                     self.status_label.text = "Documento validado com sucesso!"
                 else:
                     self.status_label.text = f"Falha na validação do documento. Código: {response.status_code}"
-                    
         except Exception as e:
             self.status_label.text = f"Erro ao enviar o documento: {e}"
