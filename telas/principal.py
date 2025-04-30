@@ -1,4 +1,3 @@
-from kivy.app import App
 from kivy.uix.screenmanager import Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.scrollview import ScrollView
@@ -7,8 +6,8 @@ from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.graphics import Color, RoundedRectangle
 from kivy.metrics import dp
-from utils import cache_search
-from feeditem import FeedItem
+from telas.utils import cache_search
+from telas.feeditem import FeedItem
 
 
 class TelaPrincipal(Screen):
@@ -41,7 +40,7 @@ class TelaPrincipal(Screen):
         # Foto e nome
         foto_e_nome = BoxLayout(orientation='vertical', size_hint_y=0.3)
         self.foto = Image(
-            source='profile.png',
+            source='imagens/default profile.jpg',
             size_hint=(None, None),
             size=(dp(80), dp(80)),
             allow_stretch=True,
@@ -63,14 +62,14 @@ class TelaPrincipal(Screen):
         # Botões
         boperfil = Button(text='Perfil', size_hint_y=None, height=dp(40), background_normal='', background_color=(1, 1, 1, 1), color=(0, 0, 0, 1))
         loja = Button(text='Loja', size_hint_y=None, height=dp(40), background_normal='', background_color=(1, 1, 1, 1), color=(0, 0, 0, 1))
-        atividades = Button(text='Atividades', size_hint_y=None, height=dp(40), background_normal='', background_color=(1, 1, 1, 1), color=(0, 0, 0, 1))
+        config = Button(text='Configurações', size_hint_y=None, height=dp(40), background_normal='', background_color=(1, 1, 1, 1), color=(0, 0, 0, 1))
         boperfil.bind(on_release=self.ir_para_perfil)
         loja.bind(on_release=self.ir_para_loja)
 
         left.add_widget(foto_e_nome)
         left.add_widget(boperfil)
         left.add_widget(loja)
-        left.add_widget(atividades)
+        left.add_widget(config)
 
         # Painel direito: feed rolável
         scroll = ScrollView(size_hint=(0.7, 1))

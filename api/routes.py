@@ -2,7 +2,7 @@ import os
 import csv
 from flask import jsonify, request
 import threading
-
+import json
 def get_usuario(usuario_email):
     # Busca no CSV o usuário com o email informado
     usuario = buscar_usuario_por_email(usuario_email)
@@ -166,3 +166,5 @@ def att_usuario():
             **{k: v for k, v in data.items() if k in fieldnames}
         }
     }), 200
+
+

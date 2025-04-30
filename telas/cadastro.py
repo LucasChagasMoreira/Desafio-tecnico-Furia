@@ -3,7 +3,7 @@ from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import Screen
 from kivy.uix.textinput import TextInput
-from utils import show_popup
+from telas.utils import show_popup
 from kivy.metrics import dp
 import json
 import requests
@@ -87,7 +87,7 @@ class TelaCadastro(Screen):
                     print("Dados salvos com sucesso!")
                     
                     try:
-                        with open("../cache/cache.json", "w", encoding="utf-8") as cache_file:
+                        with open("cache/cache.json", "w", encoding="utf-8") as cache_file:
                             json.dump(data, cache_file)
                         print("Cache salvo com sucesso!")
                     except Exception as cache_error:

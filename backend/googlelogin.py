@@ -50,7 +50,7 @@ def auth_callback():
     user_email = user_info.get('email', '')
     user_name = user_info.get('name', '')
 
-    # Verifica existência
+    # Verifica existência do e-mail no CSV
     exists = False
     if os.path.isfile(csv_file):
         try:
@@ -68,7 +68,7 @@ def auth_callback():
         try:
             with open(csv_file, mode='a', newline='', encoding='utf-8') as f:
                 writer = csv.DictWriter(f, fieldnames=fieldnames)
-                if os.stat(csv_file).st_size == 0:
+                if os.stat(csv_file).st_size == 0:  # se o arquivo está vazio, escreve o cabeçalho
                     writer.writeheader()
                 writer.writerow({
                     'Nome': user_name,
@@ -93,7 +93,6 @@ def auth_callback():
         print(f'Erro ao salvar JSON cache: {e}')
 
     return redirect(url_for('index'))
-
 
 def login_data():
 

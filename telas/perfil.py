@@ -1,19 +1,16 @@
-from kivy.app import App
-from kivy.uix.screenmanager import Screen, ScreenManager, SlideTransition
+from kivy.uix.screenmanager import Screen, SlideTransition
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.uix.image import Image
 from kivy.uix.button import Button
-from kivy.uix.textinput import TextInput
-from kivy.uix.popup import Popup
 from kivy.graphics import Color, RoundedRectangle
 from kivy.metrics import dp
 import json
-from utils import cache_search
+from telas.utils import cache_search
 
-CACHE_FILE = '../cache/cache.json'
+CACHE_FILE = 'cache/cache.json'
 
 class TelaPerfil(Screen):
     def __init__(self, **kwargs):
@@ -47,7 +44,7 @@ class TelaPerfil(Screen):
                        size=lambda i,v: setattr(self.top_bg,'size',v))
 
         foto = Image(
-            source='profile.png',
+            source='telas/imagens/default profile.jpg',
             size_hint=(None, None), size=(dp(80), dp(80)),
             pos_hint={'x': 0.02, 'top': 0.95}
         )

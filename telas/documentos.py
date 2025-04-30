@@ -1,12 +1,12 @@
-from kivy.app import App
-from kivy.uix.screenmanager import Screen, ScreenManager
+from kivy.uix.screenmanager import Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.filechooser import FileChooserListView
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.metrics import dp
-from utils import cache_search, show_popup
+from telas.utils import cache_search, show_popup
 import requests
+import json
 
 class TelaDocumento(Screen):
     def __init__(self, **kwargs):
@@ -60,9 +60,18 @@ class TelaDocumento(Screen):
         # Adiciona o layout à Screen
         self.add_widget(layout)
 
+    def on_enter(self):
+        try:
+            with open('cache/cache.json', 'r', encoding='utf-8') as f:
+                data = json.load(f)
+        except Exception:
+            data = {}
+        cpf = data.get('CPF', '').strip()
+        endereco = data.get('Endereço', '').strip()
+        if not cpf or not endereco:
+            show_popup("Voce não cadastrou o cpf ainda.")
+
     def voltar(self, instance):
-        # Retorna para a tela anterior ou nome especificado
-        # Substitua 'tela_inicial' pelo nome correto da sua tela de origem
         self.manager.current = 'principal'
 
     def submeter_documento(self, instance):

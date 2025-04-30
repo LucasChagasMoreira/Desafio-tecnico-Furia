@@ -2,13 +2,12 @@ from kivy.app import App
 from kivy.uix.screenmanager import Screen, SlideTransition
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
-from kivy.uix.image import Image
 from kivy.uix.button import Button
 from kivy.uix.textinput import TextInput
 from kivy.graphics import Color, RoundedRectangle
 from kivy.metrics import dp
 import json
-from utils import cache_search
+from telas.utils import cache_search
 import requests
 import threading
 
@@ -83,7 +82,7 @@ class TelaEditarPerfil(Screen):
         # 1) Grava dados no cache
         try:
             cache_data = {k: inp.text for k, inp in self.inputs.items()}
-            with open('../cache/cache.json', 'w', encoding='utf-8') as f:
+            with open('cache/cache.json', 'w', encoding='utf-8') as f:
                 json.dump(cache_data, f)
         except Exception as e:
             print('Erro ao salvar no cache:', e)

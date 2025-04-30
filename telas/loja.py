@@ -1,5 +1,4 @@
-from kivy.app import App
-from kivy.uix.screenmanager import Screen, ScreenManager, SlideTransition
+from kivy.uix.screenmanager import Screen, SlideTransition
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
@@ -37,12 +36,12 @@ class TelaProdutos(Screen):
 
         # Produtos com imagens
         produtos = [
-            {"image": "imagens/blusa.webp",   "name": "Blusa Esports",  "price": "R$ 199,90"},
-            {"image": "imagens/calça1.webp",  "name": "Calça Cargo",    "price": "R$ 249,90"},
-            {"image": "imagens/calça2.webp",  "name": "Calça Esportiva","price": "R$ 149,90"},
-            {"image": "imagens/camisa1.webp","name": "Camisa Verde",  "price": "R$ 129,90"},
-            {"image": "imagens/camisa2.webp","name": "Camisa Azul",   "price": "R$ 119,90"},
-            {"image": "imagens/camisa3.webp","name": "Camisa Branca", "price": "R$  99,90"},
+            {"image": "telas/imagens/blusa.webp",   "name": "Blusa Esports",  "price": "R$ 199,90"},
+            {"image": "telas/imagens/calça1.webp",  "name": "Calça Cargo",    "price": "R$ 249,90"},
+            {"image": "telas/imagens/calça2.webp",  "name": "Calça Esportiva","price": "R$ 149,90"},
+            {"image": "telas/imagens/camisa1.webp","name": "Camisa Verde",  "price": "R$ 129,90"},
+            {"image": "telas/imagens/camisa2.webp","name": "Camisa Azul",   "price": "R$ 119,90"},
+            {"image": "telas/imagens/camisa3.webp","name": "Camisa Branca", "price": "R$  99,90"},
         ]
 
         for prod in produtos:
@@ -108,7 +107,7 @@ class TelaProdutos(Screen):
 
     def on_enter(self):
         try:
-            with open('../cache/cache.json', 'r', encoding='utf-8') as f:
+            with open('cache/cache.json', 'r', encoding='utf-8') as f:
                 data = json.load(f)
         except Exception:
             data = {}

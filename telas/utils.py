@@ -1,5 +1,4 @@
 from kivy.uix.popup import Popup
-from kivy.uix.label import Label
 from kivy.uix.widget import Widget
 import platform, subprocess, webbrowser, os
 import json
@@ -21,7 +20,7 @@ def show_popup(message):
 def cache_search(campo):
         try:
             # Abre o arquivo de cache (supondo que seja um JSON)
-            with open("../cache/cache.json", "r", encoding="utf-8") as f:
+            with open("cache/cache.json", "r", encoding="utf-8") as f:
                 data = json.load(f)
             
             # Procura pelo campo "nome" no JSON
