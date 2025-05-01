@@ -1,34 +1,17 @@
-# Variáveis de ambiente
-PYTHON = python3
-PIP = pip
-VENV = venv
-
-# Diretórios
+CLIENT_DIR = src/cliente
+API_DIR = src
 SRC_DIR = src
-TEST_DIR = tests
 
-# Comandos
-VENV_DIR = $(VENV)
+# Comando para rodar a aplicação do cliente
+run-client:
+	@echo "Iniciando a aplicação cliente..."
+	PYTHONPATH=$(CLIENT_DIR) python3 -m telas.main
 
-# Instalar dependências
-#install: $(VENV_DIR)/bin/activate
-#	$(VENV_DIR)/bin/pip install -r requirements.txt
+# Comando para rodar a aplicação da API
+run-api:
+	@echo "Iniciando a aplicação da API..."
+	PYTHONPATH=$(SRC_DIR) python3 -m $(API_DIR).api.app
 
-# Criar o ambiente virtual
-$(VENV_DIR)/bin/activate: requirements.txt
-	$(PYTHON) -m venv $(VENV_DIR)
-	$(VENV_DIR)/bin/pip install -r requirements.txt
-
-# Rodar o servidor
-run: $(VENV_DIR)/bin/activate
-	$(VENV_DIR)/bin/python -m api.app
-
-clean:
-	rm -rf $(VENV_DIR) __pycache__
-
-# Gerar o arquivo de dependências
-dependencies:
-	$(PIP) freeze > requirements.txt
-
-# Para rodar o projeto, use:
-# make run
+# Comando padrão (executa as duas aplicações)
+run-all: run-client run-api
+	@echo "Ambas as aplicações foram iniciadas."
