@@ -3,6 +3,8 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.filechooser import FileChooserListView
 from kivy.uix.label import Label
 from kivy.uix.button import Button
+from kivy.uix.widget import Widget
+from kivy.graphics import Color, Rectangle
 from kivy.metrics import dp
 from telas.utils import cache_search, show_popup, CACHE_PATH
 import requests
@@ -12,96 +14,108 @@ class TelaDocumento(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.name = "documento"
-        
+
+        # Fundo cinza escuro
+        with self.canvas.before:
+            Color(0.15, 0.15, 0.15, 1)
+            self._bg_rect = Rectangle(pos=self.pos, size=self.size)
+        self.bind(pos=self._update_bg, size=self._update_bg)
+
         # Layout principal 
         layout = BoxLayout(orientation='vertical', spacing=dp(10), padding=dp(10))
-        
-        # Selecionar o documento
+
+        # Seletor de arquivos
         self.filechooser = FileChooserListView(
             filters=['*.pdf', '*.jpg', '*.png'],
             path="."
         )
         layout.add_widget(self.filechooser)
-        
+
         self.status_label = Label(
             text="Selecione um documento para validar.",
             size_hint=(1, None),
-            height=dp(30)
+            height=dp(30),
+            color=(1,1,1,1)
         )
         layout.add_widget(self.status_label)
-        
-        # Container para botões
+
+        # Container de botões
         button_layout = BoxLayout(
             orientation='horizontal',
             size_hint=(1, None),
             height=dp(50),
             spacing=dp(10)
         )
-        
+
         # Botão Voltar
         self.back_button = Button(
             text="Voltar",
             size_hint=(None, 1),
-            width=dp(100)
+            width=dp(100),
+            background_normal='',
+            background_color=(1,1,1,1),
+            color=(0,0,0,1)
         )
         self.back_button.bind(on_press=self.voltar)
         button_layout.add_widget(self.back_button)
-        
+
         # Botão Submeter Documento
         self.submit_button = Button(
             text="Submeter Documento",
-            size_hint=(1, 1)
+            size_hint=(1, 1),
+            background_normal='',
+            background_color=(1,1,1,1),
+            color=(0,0,0,1)
         )
         self.submit_button.bind(on_press=self.submeter_documento)
         button_layout.add_widget(self.submit_button)
-        
+
         layout.add_widget(button_layout)
-        
-        # Adiciona o layout à Screen
         self.add_widget(layout)
+
+    def _update_bg(self, *args):
+        self._bg_rect.pos = self.pos
+        self._bg_rect.size = self.size
 
     def on_enter(self):
         try:
             with open(CACHE_PATH, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-        except Exception:
+        except:
             data = {}
         cpf = data.get('CPF', '').strip()
         endereco = data.get('Endereço', '').strip()
         if not cpf or not endereco:
-            show_popup("Voce não cadastrou o cpf ainda.")
+            show_popup("Você não cadastrou o CPF ainda.")
 
     def voltar(self, instance):
         self.manager.current = 'principal'
 
     def submeter_documento(self, instance):
-        selection = self.filechooser.selection
-        if not selection:
+        sel = self.filechooser.selection
+        if not sel:
             self.status_label.text = "Nenhum documento selecionado!"
         else:
-            filepath = selection[0]
-            self.status_label.text = f"Documento selecionado: {filepath}\nSubmetendo..."
-            self.enviar_documento(filepath)
-    
+            path = sel[0]
+            self.status_label.text = f"Documento selecionado: {path}\nSubmetendo..."
+            self.enviar_documento(path)
+
     def enviar_documento(self, filepath):
         url = "http://localhost:5000/api/validar_documento"
         cpf = cache_search("CPF")
-        
-        if cpf == " ":
+        if not cpf.strip():
             show_popup("Você ainda não cadastrou seu CPF.")
             return
-        print(cpf)
         try:
-            with open(filepath, "rb") as file_obj:
-                response = requests.post(
+            with open(filepath, "rb") as f:
+                resp = requests.post(
                     url,
-                    files={"documento": file_obj},
+                    files={"documento": f},
                     data={"cpf": cpf}
                 )
-                
-                if response.status_code == 200:
-                    self.status_label.text = "Documento validado com sucesso!"
-                else:
-                    self.status_label.text = f"Falha na validação do documento. Código: {response.status_code}"
+            if resp.status_code == 200:
+                self.status_label.text = "Documento validado com sucesso!"
+            else:
+                self.status_label.text = f"Falha na validação. Código: {resp.status_code}"
         except Exception as e:
             self.status_label.text = f"Erro ao enviar o documento: {e}"

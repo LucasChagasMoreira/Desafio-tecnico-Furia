@@ -36,15 +36,15 @@ def criar_usuario():
             writer.writerow([
                 data["Nome"],
                 data["Email"],
-                " ",  
-                " "   
+                data["CPF"] or " ",  
+                data["Endereco"] or " "   
             ])
 
         return jsonify({
             "Nome": data["Nome"],
             "Email": data["Email"],
-            "CPF": " ",
-            "Endereço": " "
+            "CPF": data["CPF"] or " ",
+            "Endereço": data["CPF"] or " "
         }), 201
 
     except Exception as e:

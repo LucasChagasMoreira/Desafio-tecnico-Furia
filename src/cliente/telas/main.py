@@ -1,6 +1,5 @@
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager
-
 from telas.cadastro import TelaCadastro
 from telas.inicial import TelaInicial
 from telas.principal import TelaPrincipal
@@ -13,10 +12,8 @@ class Appli(App):
     def build(self):
 
         #Criando gerenciador de telas
-        geren = ScreenManager()
+        geren = ScreenManager() 
 
-        #Adicionando todas as telas ao ScreenManager
-        
         geren.add_widget(TelaInicial())
         geren.add_widget(TelaDocumento())
         geren.add_widget(TelaPerfil())

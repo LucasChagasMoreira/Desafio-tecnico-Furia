@@ -1,2 +1,3 @@
-bibs
-cpf
+bibs/
+.venv/
+cpf.jpg

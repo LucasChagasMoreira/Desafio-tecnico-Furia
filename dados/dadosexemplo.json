@@ -1,9 +1,9 @@
 {
     "Nome": "Lucas Chagas Moreira",
-    "Link do Perfil": "Campo Link do Perfil não encontrado.",
-    "Email": "a@",
-    "CPF": "14357227607",
-    "Endereço": "minha casa",
+    "Link do Perfil": "https://www.exemplo.com",
+    "Email": "emailexemplo@gmail.com",
+    "CPF": "143572276-07",
+    "Endereço": "itabirito-mg",
     "follow_facebook": [
       {
         "nome": "FURIA Esports",

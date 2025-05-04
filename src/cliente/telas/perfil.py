@@ -120,7 +120,7 @@ class TelaPerfil(Screen):
     def on_pre_enter(self):
         # Carrega dados do cache
         self.nome_label.text    = cache_search('Nome') or ''
-        self.info_link.text     = cache_search('Link do Perfil') or ''
+        self.info_link.text     = 'https://www.exemplo.com'
         self.info_email.text    = cache_search('Email') or ''
         self.info_cpf.text      = cache_search('CPF') or ''
         self.info_endereco.text = cache_search('Endereço') or ''

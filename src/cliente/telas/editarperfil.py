@@ -73,10 +73,13 @@ class TelaEditarPerfil(Screen):
     def on_pre_enter(self):
         # Carrega dados do cache ao entrar na tela
         for key, ti in self.inputs.items():
-            try:
-                ti.text = cache_search(key) or ''
-            except Exception as e:
-                print(f"Erro ao carregar '{key}' do cache: {e}")
+            if key == 'Link do Perfil':
+                ti.text = "https://www.exemplo.com"
+            else:
+                try:
+                    ti.text = cache_search(key) or ''
+                except Exception as e:
+                    print(f"Erro ao carregar '{key}' do cache: {e}")
 
     def salvar(self, instance):
         # 1) Grava dados no cache

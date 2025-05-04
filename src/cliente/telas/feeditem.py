@@ -6,7 +6,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.anchorlayout import AnchorLayout
 from telas.utils import open_url
-from telas.utils import cache_search, CACHE_PATH
+from telas.utils import cache_search
 import requests
 import threading
 

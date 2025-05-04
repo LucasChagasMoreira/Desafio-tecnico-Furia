@@ -119,7 +119,7 @@ class TelaProdutos(Screen):
     def show_popup(self):
         content = BoxLayout(orientation='vertical', padding=dp(10), spacing=dp(10))
         msg = Label(
-            text='Por favor, complete o cadastro:\nCPF e Endereço são necessários.',
+            text='Por favor, adicione CPF e Endereço em "Editar perfil" na aba de "Perfil"',
             halign='center',
             valign='middle'
         )

@@ -12,7 +12,7 @@ from kivy.graphics import Color, Rectangle
 import json
 import requests
 import threading
-from telas.utils import open_url, CACHE_PATH
+from telas.utils import open_url, CACHE_PATH, show_popup
 import time
 
 class TelaInicial(Screen):
@@ -52,22 +52,22 @@ class TelaInicial(Screen):
             size=(dp(300), dp(320))
         )
 
-        # Legenda e E-mail / usuário
+        # Legenda e E-mail
         form.add_widget(Label(
-            text="E-mail ou usuário",
+            text="E-mail",
             size_hint=(1, None),
             height=dp(20),
             color=(1, 1, 1, 1)
         ))
         self.username = TextInput(
-            hint_text="Digite seu e-mail ou usuário",
-            hint_text_color=(0.5, 0.5, 0.5, 1),  # cinza claro para o texto de dica
+            hint_text="Digite seu e-mail",
+            hint_text_color=(0.5, 0.5, 0.5, 1), 
             multiline=False,
             size_hint=(1, None),
             height=dp(45),
-            background_normal='',  # Sem fundo padrão
-            background_active='',  # Sem fundo ativo
-            background_color=(1, 1, 1, 1),  # Fundo branco para o campo de entrada
+            background_normal='', 
+            background_active='', 
+            background_color=(1, 1, 1, 1), 
             foreground_color=(0.5, 0.5, 0.5, 1),  # Cinza médio para o texto
             cursor_color=(0, 0, 0, 1),  # Cor do cursor (preto)
             padding=(dp(12), dp(12))
@@ -153,7 +153,8 @@ class TelaInicial(Screen):
         u = self.username.text
         s = self.password.text
         if not u or not s:
-            print("Preencha todos os campos.")
+            show_popup("Preencha todos os campos.")
+            
             return
         try:
             r = requests.get(f"http://localhost:5000/api/usuario/{u}")

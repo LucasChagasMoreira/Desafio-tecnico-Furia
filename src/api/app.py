@@ -7,7 +7,7 @@ import os
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'senha_secreta')
 
-#Cria o objeto oauth do google
+# Cria o objeto oauth do google
 init_google_oauth(app)
 @app.route('/')
 def index():
