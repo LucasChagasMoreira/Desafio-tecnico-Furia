@@ -13,10 +13,14 @@ REQS = requirements.txt
 
 # Cria o ambiente virtual se não existir e atualiza pip
 venv:
+	@sudo apt install -y libmtdev1
+	@sudo apt install -y xclip xsel
 	@test -d $(VENV_DIR) || python3 -m venv $(VENV_DIR)
 	@echo "Ambiente virtual pronto em $(VENV_DIR)"
+	@$(PYTHON) -m ensurepip --upgrade
 	@$(PIP) install --upgrade pip
-
+	
+     
 # Instala as dependências no virtualenv
 install: venv
 	@echo "Instalando dependências..."
