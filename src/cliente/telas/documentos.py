@@ -26,7 +26,7 @@ class TelaDocumento(Screen):
 
         # Seletor de arquivos
         self.filechooser = FileChooserListView(
-            filters=['*.pdf', '*.jpg', '*.png'],
+            filters=['*.pdf', '*.jpg', '*.png', '*.jpeg'],
             path="."
         )
         layout.add_widget(self.filechooser)

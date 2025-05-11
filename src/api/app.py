@@ -4,6 +4,10 @@ from auth.validar_documentos import validar_documento
 from auth.googlelogin import login_google, auth_callback, init_google_oauth, login_data
 from auth.facebooklogin import fake_data
 import os
+
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'senha_secreta')
 

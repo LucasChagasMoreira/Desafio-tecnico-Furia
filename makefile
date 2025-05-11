@@ -27,6 +27,7 @@ install: venv
 	@$(PIP) install -r $(REQS)
 	@echo "Instalando Tesseract OCR (sistema)..."
 	@sudo apt-get update && sudo apt-get install -y tesseract-ocr
+	@sudo apt-get install tesseract-ocr-por
 	@echo "Dependências instaladas."
 
 # Comando para rodar a aplicação do cliente

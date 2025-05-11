@@ -1,30 +1,37 @@
 import pytesseract
 from PIL import Image
 from flask import jsonify, request
+from transformers import pipeline
+
+# Inicialize o modelo LLM uma vez (fora da função)
+llm_pipeline = pipeline("text2text-generation", model="google/flan-t5-base")
 
 def validar_documento(documento, cpf):
     try:
-        # Abre a imagem do arquivo enviado
+        #OCR: Abre a imagem e extrai texto
         image = Image.open(documento.stream)
-        
-        # Extrai o texto da imagem (ajuste o idioma conforme necessário)
         texto_extraido = pytesseract.image_to_string(image, lang='por')
-        
-        
-        if cpf in texto_extraido:
-            return jsonify({
-                "valid": True,
-                "message": "CPF encontrado no documento.",
-                "texto": texto_extraido
-            }), 200
-        else:
-            print(f"{cpf} não contido")
-            print(texto_extraido)
-            return jsonify({
-                "valid": False,
-                "message": "CPF não encontrado no documento.",
-                "texto": texto_extraido
-            }), 400
+
+        #Checagem direta do CPF no texto extraído
+        cpf_presente = cpf in texto_extraido
+
+        #Validação com LLM leve
+        prompt = (
+            f"Considere o seguinte texto extraído de uma imagem de documento:\n\n"
+            f"{texto_extraido}\n\n"
+            f"O texto parece conter um CPF válido como '{cpf}' e fazer parte de um documento oficial?"
+            f" Responda apenas com 'sim' ou 'não' e justifique brevemente."
+        )
+
+        resposta_llm = llm_pipeline(prompt, max_new_tokens=100)[0]['generated_text']
+
+        # 4. Estrutura da resposta
+        return jsonify({
+            "cpf_encontrado_literalmente": cpf_presente,
+            "validacao_llm": resposta_llm,
+            "texto_extraido": texto_extraido
+        }), 200 if cpf_presente else 400
+
     except Exception as e:
         return jsonify({
             "error": "Erro ao processar o documento.",
