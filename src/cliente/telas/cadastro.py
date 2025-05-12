@@ -5,133 +5,121 @@ from kivy.uix.screenmanager import Screen
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.textinput import TextInput
 from kivy.uix.widget import Widget
-from kivy.graphics import Color, Rectangle
+from kivy.graphics import Color, RoundedRectangle
 from kivy.metrics import dp
 import json
 import requests
 from telas.utils import show_popup, CACHE_PATH
+
 
 class TelaCadastro(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.name = "cadastro"
 
-        # Fundo cinza
+        # Fundo azul escuro
         with self.canvas.before:
-            Color(0.15, 0.15, 0.15, 1)
-            self._bg_rect = Rectangle(pos=self.pos, size=self.size)
+            Color(0.12, 0.15, 0.2, 1)
+            self._bg_rect = RoundedRectangle(pos=self.pos, size=self.size)
         self.bind(pos=self._update_bg, size=self._update_bg)
 
-        # Layout principal
-        layout = BoxLayout(
-            orientation="vertical",
-            padding=[dp(20)] * 4,
-            spacing=dp(20)
-        )
+        layout = BoxLayout(orientation="vertical", padding=[dp(20)] * 4, spacing=dp(20))
 
-        # Título centralizado
-        titulo = Label(
-            text="Cadastro",
-            font_size="32sp",
-            size_hint=(1, None),
-            height=dp(60),
+        # Cabeçalho com subtítulo
+        header = BoxLayout(orientation='vertical', size_hint=(1, None), height=dp(100), spacing=dp(10))
+        title = Label(
+            text="Cadastro de Usuário",
+            font_size="26sp",
+            bold=True,
+            color=(1, 1, 1, 1),
             halign="center",
             valign="middle",
-            color=(1, 1, 1, 1)
+            size_hint=(1, None),
+            height=dp(40)
         )
-        titulo.bind(size=lambda inst, val: setattr(inst, 'text_size', inst.size))
-        layout.add_widget(titulo)
+        title.bind(size=lambda inst, val: setattr(inst, 'text_size', inst.size))
+        subtitle = Label(
+            text="Complete com suas informações básicas",
+            font_size="16sp",
+            color=(0.8, 0.9, 1, 1),
+            halign="center",
+            valign="middle",
+            size_hint=(1, None),
+            height=dp(20)
+        )
+        subtitle.bind(size=lambda inst, val: setattr(inst, 'text_size', inst.size))
+        header.add_widget(title)
+        header.add_widget(subtitle)
+        layout.add_widget(header)
 
-        # Função auxiliar para criar campo centralizado com label alinhado à esquerda
+        # Função auxiliar para criar campo
         def criar_campo(label_text, hint_text, attr_name):
-            container_width = dp(380)
-            input_width = dp(300)
-            padding_left = (container_width - input_width) / 2
+            container = BoxLayout(orientation='vertical', spacing=dp(5), size_hint=(1, None), height=dp(80))
 
-            # Container vertical
-            container = BoxLayout(
-                orientation='vertical',
-                size_hint=(None, None),
-                size=(container_width, dp(80)),
-                spacing=dp(5)
-            )
-            # Label alinhado à esquerda do input via padding
-            label_row = BoxLayout(
+            label = Label(
+                text=label_text,
+                font_size="16sp",
+                color=(0.8, 0.9, 1, 1),
                 size_hint=(1, None),
                 height=dp(20),
-                padding=[padding_left, 0, 0, 0]
-            )
-            lbl = Label(
-                text=label_text,
-                size_hint=(None, None),
-                size=(input_width, dp(20)),
-                font_size='18sp',
                 halign='left',
-                valign='middle',
-                color=(1, 1, 1, 1)
+                valign='middle'
             )
-            lbl.bind(size=lambda inst, val: setattr(inst, 'text_size', (inst.width, None)))
-            label_row.add_widget(lbl)
-            container.add_widget(label_row)
+            label.bind(size=lambda inst, val: setattr(inst, 'text_size', inst.size))
 
-            # Row para input com padding igual
-            row = BoxLayout(
-                size_hint=(1, None),
-                height=dp(50),
-                padding=[padding_left, 0, 0, 0]
-            )
-            ti = TextInput(
+            input_box = TextInput(
                 hint_text=hint_text,
-                size_hint=(None, None),
-                size=(input_width, dp(50)),
-                font_size='20sp',
-                multiline=False,
-                background_color=(1, 1, 1, 1),
-                foreground_color=(0, 0, 0, 1)
-            )
-            setattr(self, attr_name, ti)
-            row.add_widget(ti)
-            container.add_widget(row)
-
-            # Centralizar horizontalmente
-            wrapper = AnchorLayout(
+                hint_text_color=(0.6, 0.6, 0.6, 1),
+                font_size="16sp",
+                foreground_color=(1, 1, 1, 1),
+                background_color=(0.22, 0.25, 0.3, 1),
+                padding=[dp(10), dp(10)],
                 size_hint=(1, None),
-                height=dp(80),
-                anchor_x='center',
-                anchor_y='center'
+                height=dp(45),
+                background_normal='',
+                multiline=False
             )
-            wrapper.add_widget(container)
-            return wrapper
+            setattr(self, attr_name, input_box)
 
-        # Campos de input
-        layout.add_widget(criar_campo("Nome:", "Digite seu nome", 'nome'))
-        layout.add_widget(criar_campo("Email:", "Digite seu email", 'email'))
-        layout.add_widget(criar_campo("Endereço:", "Endereço (opcional)", 'endereco'))
-        layout.add_widget(criar_campo("CPF:", "(ex: 123456789-10) (opcional)", 'cpf'))
+            container.add_widget(label)
+            container.add_widget(input_box)
 
-        # Espaço antes do botão
-        layout.add_widget(Widget(size_hint=(1, None), height=dp(40)))
+            return container
 
-        # Botão Cadastrar centralizado
-        btn_row = BoxLayout(
-            orientation='horizontal',
-            size_hint=(1, None),
-            height=dp(50)
-        )
-        btn_row.add_widget(Widget(size_hint_x=1))
-        confirmar = Button(
+        layout.add_widget(criar_campo("Nome", "Digite seu nome", 'nome'))
+        layout.add_widget(criar_campo("E-mail", "Digite seu e-mail", 'email'))
+        layout.add_widget(criar_campo("Endereço", "Endereço (opcional)", 'endereco'))
+        layout.add_widget(criar_campo("CPF", "Ex: 123456789-10", 'cpf'))
+
+        # Espaço
+        layout.add_widget(Widget(size_hint=(1, None), height=dp(20)))
+
+        # Botão de Cadastrar
+        btn_box = BoxLayout(size_hint=(1, None), height=dp(50), padding=[dp(40), 0, dp(40), 0])
+        btn = Button(
             text="Cadastrar",
-            size_hint=(None, None),
-            size=(dp(200), dp(50)),
-            font_size="20sp",
+            font_size="18sp",
             background_normal='',
-            background_color=(1, 1, 1, 1),
-            color=(0, 0, 0, 1)
+            background_color=(0.2, 0.6, 1, 1),  # Azul vibrante
+            color=(1, 1, 1, 1),
+            size_hint=(1, 1)
         )
-        confirmar.bind(on_press=self.cadastrar)
-        btn_row.add_widget(confirmar)
-        btn_row.add_widget(Widget(size_hint_x=1))
-        layout.add_widget(btn_row)
+        btn.bind(on_press=self.cadastrar)
+        btn_box.add_widget(btn)
+        layout.add_widget(btn_box)
+
+        # Rodapé informativo
+        footer = Label(
+            text="Já possui conta? Volte à tela de login.",
+            font_size='14sp',
+            color=(0.7, 0.7, 0.7, 1),
+            size_hint=(1, None),
+            height=dp(30),
+            halign="center",
+            valign="middle"
+        )
+        footer.bind(size=lambda inst, val: setattr(inst, 'text_size', inst.size))
+        layout.add_widget(footer)
 
         self.add_widget(layout)
 
@@ -141,8 +129,12 @@ class TelaCadastro(Screen):
 
     def cadastrar(self, instance):
         if self.nome.text and self.email.text:
-            data = {"Nome": self.nome.text, "Email": self.email.text,
-                    "Endereco": self.endereco.text, "CPF": self.cpf.text}
+            data = {
+                "Nome": self.nome.text,
+                "Email": self.email.text,
+                "Endereco": self.endereco.text,
+                "CPF": self.cpf.text
+            }
             try:
                 response = requests.post("http://localhost:5000/api/usuario", json=data)
                 if response.status_code == 201:
